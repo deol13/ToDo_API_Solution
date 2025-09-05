@@ -53,6 +53,8 @@ public class PersonController {
         return personService.findById(id);
     }
 
+
+
     @RolesAllowed({"ADMIN", "MODERATOR"})
     @PostMapping("/register")
     @ResponseStatus(HttpStatus.CREATED) // 201 Created

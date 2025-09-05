@@ -3,6 +3,8 @@ package se.lexicon.todo_app.service;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import se.lexicon.notify.model.Email;
+import se.lexicon.notify.service.MessageService;
 import se.lexicon.todo_app.dto.PersonDto;
 import se.lexicon.todo_app.dto.PersonRegistrationDto;
 import se.lexicon.todo_app.entity.Person;
@@ -18,6 +20,7 @@ import java.util.stream.Collectors;
 @Transactional
 public class PersonServiceImpl implements PersonService {
     private final PersonRepository personRepository;
+    private final MessageService<Email> emailService;
 
     // To use notify-util-spring module for email service inject its dependency (MessageService<Email> emailService)
 
@@ -25,10 +28,11 @@ public class PersonServiceImpl implements PersonService {
 
     private PasswordEncoder passwordEncoder;
 
-    public PersonServiceImpl(PersonRepository personRepository, UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    public PersonServiceImpl(PersonRepository personRepository, UserRepository userRepository, PasswordEncoder passwordEncoder, MessageService<Email> emailService) {
         this.personRepository = personRepository;
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.emailService = emailService;
     }
 
 
@@ -71,9 +75,9 @@ public class PersonServiceImpl implements PersonService {
         // Save Person (cascade will save User)
         person = personRepository.save(person);
 
-        // emailService.sendMessage(new Email(person.getEmail(), "Welcome to Todo App", "Hello " + person.getName() + ",\n\nThank you for registering with us!"));
+         emailService.sendMessage(new Email(person.getEmail(), "Welcome to Todo App", "Hello " + person.getName() + ",\n\nThank you for registering with us!"));
 
-        // emailService.sendMessage(new Email(person.getEmail(), "Welcome to Todo App", "Hello " + person.getName() + ",\n\nThank you for registering with us!"));
+         emailService.sendMessage(new Email(person.getEmail(), "Welcome to Todo App", "Hello " + person.getName() + ",\n\nThank you for registering with us!"));
 
         // Return DTO
         return convertToDto(person);
